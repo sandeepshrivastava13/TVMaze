@@ -27,7 +27,15 @@ const Input=styled.input`
     border:none
 `
 
-const Navbar = () => {
+const Navbar = ({searchText}) => {
+    const [search,setSearchText]=React.useState('')
+    
+    const onUpdateText=(evt)=>{
+        const val=evt?.target?.value;
+        setSearchText(val)
+        searchText(val)
+
+    }
   return (
     <Container>
 
@@ -36,7 +44,7 @@ const Navbar = () => {
         </Link>
         <SearchContainer>
         <SearchIcon style={{color:'white',marginRight:10}}/>
-        <Input />
+        <Input placeholder='Search' value={search} onChange={evt=>onUpdateText(evt)} type='text'/>
         </SearchContainer>
 
     </Container>
