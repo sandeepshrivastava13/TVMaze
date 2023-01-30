@@ -2,7 +2,12 @@ import React from 'react'
 import { useLocation } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import styled from 'styled-components'
+import {mobile} from '../responsive.js'
 
+
+const Container=styled.div`
+    
+`
 const Left=styled.div`
     flex: 0.5;
     display:flex;
@@ -19,11 +24,20 @@ const Right=styled.div`
 `
 const Wrapper=styled.div`
     display: flex;
-    height:100vh
+    height:100vh;
+    ${mobile({
+        flexDirection:'column'
+    })}
 `
 const Image=styled.img`
 height:80vh;
 width:70vh;
+border-radius: 10px;
+${mobile({
+    width:300,
+    height:300,
+    marginTop:30
+})}
 `
 const Title=styled.h1`
     font-size: 30px;
@@ -36,8 +50,8 @@ const Summary=styled.p`
 `
 
 export const MovieDescription = () => {
+
     const location=useLocation();
-    
     let html = location.state.message[2];
     let div = document.createElement("div");
     div.innerHTML = html;
@@ -45,7 +59,7 @@ export const MovieDescription = () => {
     const rating=!!location.state.message[5]?`(${location.state.message[5]})`:''
 
   return (
-    <div>
+    <Container>
         <Navbar />
         <Wrapper>
         <Left>
@@ -58,6 +72,6 @@ export const MovieDescription = () => {
         <Summary style={{marginTop:50}}>{summary}</Summary>
         </Right>
         </Wrapper>
-    </div>
+    </Container>
   )
 }

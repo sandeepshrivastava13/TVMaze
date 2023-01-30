@@ -2,6 +2,7 @@ import React,{useEffect} from 'react'
 import {useNavigate} from 'react-router-dom'
 import styled from 'styled-components';
 import Navbar from '../components/Navbar';
+import {mobile} from '../responsive.js'
 
 
 const Container=styled.div`
@@ -12,35 +13,38 @@ const MovieWrapper=styled.div`
     display: flex;
     width:100%;
     flex-wrap: wrap;
-    
+    ${mobile({
+        flexDirection:'column'
+    })}
 `
 const Image=styled.img`
     height:250px;
     width:250px;
     border-radius: 10px;
-    margin-top: 50px;
+    margin-top: 25px;
     margin-left: 45px;
-`
-
-const Wrapper=styled.div`
-display: flex;
-flex-direction: column;
-cursor: pointer;
+    &:hover {
+    background-color: #e9f5f5;
+    transform: scale(1.1);
+  }
 `
 
 const Home = () => {
     
     const [movieData,setMovieData]=React.useState([])
     const [genreData,setGenreData]=React.useState([])
-    const [search,setSearch]=React.useState('')
+    const [search,setSearch]=React.useState(null)
+    const [searchData,setSearchData]=React.useState([])
+    const [copyMovieData,setCopyMovieData]=React.useState([])
+    const [found,setFound]=React.useState(true)
  
     useEffect(() => {
       let gData=[]
-        fetch("http://api.tvmaze.com/shows?page=1")
+        fetch("http://api.tvmaze.com/shows")
           .then((response) => response.json())
           .then((data) => 
             {
-           
+            setCopyMovieData(data)
             data.forEach(element => {
                 
                 element.genres.forEach(genre=>{
@@ -58,11 +62,12 @@ const Home = () => {
                      return {[item]:filterData}
                  })
                 setMovieData(result)
+                
                
             });
         }
           );
-      }, []);
+      }, [search]);
    
     const navigate=useNavigate()
     const navigateToDescription=(poster,title,desc,year,length,rating)=>{
@@ -74,37 +79,66 @@ const Home = () => {
         setSearch(text)
     }
 
-    console.log(search,"searching...")
-   
-  return (
-    <Container>
-    <Navbar searchText={(text)=>updateSearchText(text)} />
 
- 
-    <MovieWrapper>
-        
+    const getSearchData=(text)=>{
+        if(text.length<=0)
         {
-            movieData.map(movie=>{
-                return genreData.map(genre=>{
-                    const data=movie[genre]
-                   
-                    return data?.map(d=>{
-                        const srcMedium=d?.image.medium
-                        const srcOriginal=d?.image.original
-                        const rating=d?.rating.average
-                        return(
-                            <Wrapper>
-                            <h1 style={{marginLeft:50,marginTop:20}}>{d?.genres[0]}</h1>
-                            <Image src={srcMedium} onClick={()=>navigateToDescription(srcOriginal,d?.name,d?.summary,d?.premiered,d?.averageRuntime,rating)}/>
-                            </Wrapper>
-                        )
+            setMovieData(copyMovieData)
+        }
+        else{
+        let gData=[]
+        const result=text.map(item=>{
+           return copyMovieData.filter(element=>{
+                return element.id===item.show.id
+            })
+        })
+         result.forEach(element => {
+            element.length>0 && element.map(item=>{
+                item.genres.forEach(genre=>{
+                        if(!gData.includes(genre))
+                        {
+                            gData.push(genre)
+                        }
+                      setGenreData(gData)
+                      
                     })
-                })
+            })
+        })
+        const res=gData.map(item=>{
+            const filterData= result.flat(1).filter(element=>{
+                return element.genres[0]===item
+             })
+             return {['']:filterData}
+         })
+        
+            setMovieData(res)
+        
+        }           
+}  
+
+  return (
+ 
+    <Container>
+    <Navbar searchTextFromHome={(text)=>updateSearchText(text)} searchDataFromHome={(text)=>getSearchData(text)} />
+    <MovieWrapper>
+       {movieData.map((movie,index)=>{
+                for (const [key, value] of Object.entries(movie)) {
+                    return (<div>
+                        <h2 style={{marginLeft:45,marginTop:20}}>{key}</h2>
+                        {
+                            value.map(item=>{
+                                const srcMedium=item?.image.medium
+                                const srcOriginal=item?.image.original
+                                const rating=item?.rating.average
+                               return <Image src={srcMedium} onClick={()=>navigateToDescription(srcOriginal,item?.name,item?.summary,item?.premiered,item?.averageRuntime,rating)} />
+                            })
+                        }
+                        </div>)
+                  }
             })
         }
     </MovieWrapper>
    
-    
     </Container>
   )
 }
