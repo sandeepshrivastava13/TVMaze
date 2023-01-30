@@ -123,7 +123,7 @@ const Home = () => {
     <MovieWrapper>
        {movieData.map((movie,index)=>{
                 for (const [key, value] of Object.entries(movie)) {
-                    return (<div>
+                    return value.length>0 &&(<div>
                         <h2 style={{marginLeft:45,marginTop:20}}>{key}</h2>
                         {
                             value.map(item=>{
