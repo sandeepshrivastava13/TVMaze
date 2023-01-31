@@ -38,7 +38,7 @@ const Home = () => {
  
     useEffect(() => {
       let gData=[]
-        fetch("http://api.tvmaze.com/shows")
+        fetch("https://api.tvmaze.com/shows")
           .then((response) => response.json())
           .then((data) => 
             {
@@ -119,16 +119,16 @@ const Home = () => {
     <Container>
     <Navbar searchTextFromHome={(text)=>updateSearchText(text)} searchDataFromHome={(text)=>getSearchData(text)} />
     <MovieWrapper>
-       {movieData.map((movie)=>{
-                 for (const [key, value] of Object.entries(movie)) {
-                    return value.length>0 &&(<div key={key}>
-                        <h2 style={{marginLeft:45,marginTop:20}} >{key}</h2>
+       {movieData.map((movie,index)=>{
+                for (const [key, value] of Object.entries(movie)) {
+                    return value.length>0 &&(<div key={index.toString()}>
+                        <h2 style={{marginLeft:45,marginTop:20}} key={key}>{key}</h2>
                         {
                             value.map(item=>{
                                 const srcMedium=item?.image.medium
                                 const srcOriginal=item?.image.original
                                 const rating=item?.rating.average
-                               return <Image src={srcMedium} onClick={()=>navigateToDescription(srcOriginal,item?.name,item?.summary,item?.premiered,item?.averageRuntime,rating)} />
+                               return <Image src={srcMedium} onClick={()=>navigateToDescription(srcOriginal,item?.name,item?.summary,item?.premiered,item?.averageRuntime,rating)} key={item.id}/>
                             })
                         }
                         </div>)
