@@ -34,9 +34,7 @@ const Home = () => {
     const [movieData,setMovieData]=React.useState([])
     const [genreData,setGenreData]=React.useState([])
     const [search,setSearch]=React.useState(null)
-    const [searchData,setSearchData]=React.useState([])
     const [copyMovieData,setCopyMovieData]=React.useState([])
-    const [found,setFound]=React.useState(true)
  
     useEffect(() => {
       let gData=[]
@@ -121,10 +119,10 @@ const Home = () => {
     <Container>
     <Navbar searchTextFromHome={(text)=>updateSearchText(text)} searchDataFromHome={(text)=>getSearchData(text)} />
     <MovieWrapper>
-       {movieData.map((movie,index)=>{
-                for (const [key, value] of Object.entries(movie)) {
-                    return value.length>0 &&(<div>
-                        <h2 style={{marginLeft:45,marginTop:20}}>{key}</h2>
+       {movieData.map((movie)=>{
+                 for (const [key, value] of Object.entries(movie)) {
+                    return value.length>0 &&(<div key={key}>
+                        <h2 style={{marginLeft:45,marginTop:20}} >{key}</h2>
                         {
                             value.map(item=>{
                                 const srcMedium=item?.image.medium
